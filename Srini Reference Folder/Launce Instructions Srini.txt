@@ -1,0 +1,7 @@
+Step 4: Launch the dashboard
+cd src
+streamlit run app.py
+
+Your browser should open automatically to http://localhost:8501. If it doesn't, open that URL manually.
+
+To stop the dashboard, press Ctrl+C in the terminal.

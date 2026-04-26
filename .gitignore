@@ -1,0 +1,14 @@
+# Database (regenerate with: python src/generate_data.py)
+data/*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
