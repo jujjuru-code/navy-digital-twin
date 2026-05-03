@@ -2359,7 +2359,7 @@ elif page == "Sailor Profile":
     # ── TRAINING TAB ─────────────────────────────────────────────────────────
     with tab_train:
         df_nec = query(
-            "SELECT qual_code AS nec_code, qual_title, proficiency_level, date_earned, currency_expires, is_current "
+            "SELECT qual_code AS nec_code, qual_title, date_earned, currency_expires, is_current "
             "FROM qualification WHERE dod_id=? AND qual_type='NEC' ORDER BY date_earned DESC",
             (dod_id,)
         )
