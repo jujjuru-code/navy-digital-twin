@@ -1,7 +1,32 @@
-Step 4: Launch the dashboard
+Show data in .md file
+1) Open https://inloop.github.io/sqlite-viewer/
+2) Drop the .md file in here
+3) Look at the drop down list for the list of tables
+
+---------------------------------------------------
+Step 4: Launch the dashboard in browser using localhost
+Open Command Prompt
 cd src
 streamlit run app.py
 
 Your browser should open automatically to http://localhost:8501. If it doesn't, open that URL manually.
 
 To stop the dashboard, press Ctrl+C in the terminal.
+-----------------------------------------------------------
+
+Launch the published app in Streamlit
+
+https://jujjuru-code-navy-digital-twin-srcapp-99tunt.streamlit.app/
+
+------------------------------------------------------------------------
+
+Push to GitHub so the live Streamlit app gets the fix too:
+
+cd "C:\Navy POC\navy_digital_twin"
+git add src/app.py
+git commit -m "Fix: remove proficiency_level column (not in schema)"
+git push
+
+Streamlit Cloud will auto-redeploy in about 60 seconds after the push.
+
+--------------------------------------------------------------

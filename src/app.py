@@ -993,67 +993,133 @@ for _key, _val in {
 if not st.session_state["logged_in"]:
     st.markdown("""
     <style>
+    /* Hide Streamlit chrome to reclaim vertical space */
     [data-testid="stSidebar"] { display: none; }
+    header[data-testid="stHeader"] { display: none !important; }
+    #MainMenu { display: none !important; }
+    footer { display: none !important; }
+    .block-container {
+        padding-top: 0 !important;
+        padding-bottom: 0.5rem !important;
+        max-width: 960px !important;
+    }
+    /* ── Logo banner ── */
+    .login-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(90deg, #003B4F 0%, #08262C 100%);
+        padding: 10px 28px;
+        border-radius: 0 0 8px 8px;
+        margin-bottom: 6px;
+    }
+    /* MyNavyHR mark */
+    .mnhr-mark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .mnhr-anchor {
+        font-size: 28px;
+        line-height: 1;
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,.4));
+    }
+    .mnhr-wordmark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+    .mnhr-top { font-size: 11px; font-weight: 500; color: #88C8D8; letter-spacing: .12em; text-transform: uppercase; }
+    .mnhr-bot { font-size: 20px; font-weight: 900; color: #FFFFFF; letter-spacing: .04em; }
+    /* IBM mark */
+    .ibm-mark {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+    }
+    .ibm-letters {
+        font-size: 26px;
+        font-weight: 900;
+        color: #FFFFFF;
+        letter-spacing: .08em;
+        font-family: 'Arial Black', Arial, sans-serif;
+        position: relative;
+        /* IBM stripe effect via background clip */
+        background: repeating-linear-gradient(
+            180deg,
+            #FFFFFF 0px, #FFFFFF 4px,
+            transparent 4px, transparent 7px
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .ibm-sub { font-size: 9px; font-weight: 500; color: #88C8D8; letter-spacing: .15em; text-transform: uppercase; }
+    /* ── Hero ── */
     .login-hero {
         text-align: center;
-        padding: 2.5rem 1rem 1.5rem;
+        padding: 6px 1rem 8px;
     }
     .login-hero h1 {
         font-family: 'Roboto Slab', serif;
-        font-size: 2.2rem;
+        font-size: 1.9rem;
         font-weight: 800;
         color: #003B4F;
         letter-spacing: .04em;
-        margin-bottom: 4px;
+        margin: 4px 0 2px;
     }
     .login-hero p {
         color: #546E7A;
-        font-size: 1rem;
+        font-size: 0.9rem;
         margin-bottom: 0;
     }
-    .persona-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        max-width: 860px;
-        margin: 0 auto 2rem;
-    }
-    @media (max-width: 700px) {
-        .persona-grid { grid-template-columns: 1fr; }
-    }
+    /* ── Persona cards ── */
     .persona-card {
         background: #fff;
         border: 2px solid #C6CCD0;
         border-radius: 12px;
-        padding: 28px 20px 20px;
+        padding: 18px 16px 14px;
         text-align: center;
         transition: border-color .2s, box-shadow .2s;
         cursor: pointer;
     }
     .persona-card:hover { border-color: #088199; box-shadow: 0 4px 18px rgba(8,129,153,.15); }
-    .persona-icon { font-size: 3rem; margin-bottom: 10px; }
-    .persona-role { font-size: 18px; font-weight: 800; color: #003B4F; margin-bottom: 4px; }
-    .persona-name { font-size: 15px; font-weight: 600; color: #08262C; margin-bottom: 2px; }
-    .persona-desc { font-size: 12px; color: #546E7A; margin-bottom: 4px; line-height: 1.5; }
-    .persona-unit { font-size: 11px; color: #088199; font-weight: 600; }
+    .persona-icon { font-size: 2.4rem; margin-bottom: 6px; }
+    .persona-role { font-size: 17px; font-weight: 800; color: #003B4F; margin-bottom: 3px; }
+    .persona-name { font-size: 14px; font-weight: 600; color: #08262C; margin-bottom: 2px; }
+    .persona-desc { font-size: 11px; color: #546E7A; margin-bottom: 3px; line-height: 1.4; }
+    .persona-unit { font-size: 10px; color: #088199; font-weight: 600; }
     .login-divider {
         text-align: center;
         color: #C6CCD0;
         font-size: 11px;
         letter-spacing: .1em;
-        margin: 0 auto 1.5rem;
+        margin: 0 auto 10px;
         text-transform: uppercase;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # Navy anchor + branding
-    st.markdown("""
-    <div class="login-hero">
-        <div style="font-size:4rem;margin-bottom:8px;">⚓</div>
-        <h1>Sailor Digital Twin</h1>
-        <p>MyNavy HR &nbsp;·&nbsp; Powered by Anthropic Claude &nbsp;·&nbsp; POC Demo</p>
-        <p style="margin-top:6px;font-size:12px;color:#aaa;">All data is synthetic — no PII</p>
+    # Banner with base64-embedded SVG logos (zero external dependencies)
+    _IBM_B64  = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjAgODgiIHdpZHRoPSIxMzAiIGhlaWdodD0iNDQiPgogIDxkZWZzPgogICAgPGNsaXBQYXRoIGlkPSJpYm1fY2xpcCI+CiAgICAgIDx0ZXh0IHg9IjQiIHk9Ijc0IgogICAgICAgICAgICBmb250LWZhbWlseT0iQXJpYWwgQmxhY2ssSGVsdmV0aWNhIE5ldWUsc2Fucy1zZXJpZiIKICAgICAgICAgICAgZm9udC1zaXplPSI3NiIgZm9udC13ZWlnaHQ9IjkwMCIgbGV0dGVyLXNwYWNpbmc9IjYiPklCTTwvdGV4dD4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIyNjAiIGhlaWdodD0iODgiIGZpbGw9IndoaXRlIi8+CiAgPHJlY3Qgd2lkdGg9IjI2MCIgaGVpZ2h0PSI4OCIgZmlsbD0iIzFGNzBDMSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjIyIiAgIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjMwLjUiIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjM5IiAgIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjQ3LjUiIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjU2IiAgIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgogIDxyZWN0IHg9IjAiIHdpZHRoPSIyNjAiIHk9IjY0LjUiIGhlaWdodD0iNS41IiBmaWxsPSJ3aGl0ZSIgY2xpcC1wYXRoPSJ1cmwoI2libV9jbGlwKSIvPgo8L3N2Zz4="
+    _MNHR_B64 = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iODgiIGhlaWdodD0iODgiPgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMTExMTExIi8+CiAgPHJlY3QgeD0iNjciIHk9IjAiIHdpZHRoPSI2NiIgaGVpZ2h0PSIxNTUiIGZpbGw9IiNDODk2MEEiLz4KICA8Y2xpcFBhdGggaWQ9ImxwIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNjciIGhlaWdodD0iMTU1Ii8+PC9jbGlwUGF0aD4KICA8ZyBjbGlwLXBhdGg9InVybCgjbHApIiBvcGFjaXR5PSIwLjQ1Ij4KICAgIDxsaW5lIHgxPSItMjAiIHkxPSIyMDAiIHgyPSIxMjAiIHkyPSItNDAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iOSIvPgogICAgPGxpbmUgeDE9Ii00MCIgeTE9IjIwMCIgeDI9IjEwMCIgeTI9Ii00MCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI5Ii8+CiAgICA8bGluZSB4MT0iLTYwIiB5MT0iMjAwIiB4Mj0iODAiICB5Mj0iLTQwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjkiLz4KICAgIDxsaW5lIHgxPSIwIiAgIHkxPSIyMDAiIHgyPSIxNDAiIHkyPSItNDAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iOSIvPgogICAgPGxpbmUgeDE9IjIwIiAgeTE9IjIwMCIgeDI9IjE2MCIgeTI9Ii00MCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI5Ii8+CiAgICA8bGluZSB4MT0iNDAiICB5MT0iMjAwIiB4Mj0iMTgwIiB5Mj0iLTQwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjkiLz4KICA8L2c+CiAgPHBvbHlnb24gcG9pbnRzPSIzMi4wMCwyOC4wMCAzNC40NywzNC42MCA0MS41MSwzNC45MSAzNS45OSwzOS4zMCAzNy44OCw0Ni4wOSAzMi4wMCw0Mi4yMCAyNi4xMiw0Ni4wOSAyOC4wMSwzOS4zMCAyMi40OSwzNC45MSAyOS41MywzNC42MCIgZmlsbD0iI0ZGRkZGRiIvPgogIDxyZWN0IHg9IjEzMyIgeT0iMTYiICB3aWR0aD0iNjciIGhlaWdodD0iMTgiIGZpbGw9IiNDODk2MEEiLz4KICA8cmVjdCB4PSIxMzMiIHk9IjQ0IiAgd2lkdGg9IjY3IiBoZWlnaHQ9IjE4IiBmaWxsPSIjQzg5NjBBIi8+CiAgPHJlY3QgeD0iMTMzIiB5PSI3MiIgIHdpZHRoPSI2NyIgaGVpZ2h0PSIxOCIgZmlsbD0iI0M4OTYwQSIvPgogIDxyZWN0IHg9IjEzMyIgeT0iMTAwIiB3aWR0aD0iNjciIGhlaWdodD0iMTgiIGZpbGw9IiNDODk2MEEiLz4KICA8cG9seWdvbiBwb2ludHM9IjE2OC4wMCwyMi4wMCAxNzAuNDcsMjguNjAgMTc3LjUxLDI4LjkxIDE3MS45OSwzMy4zMCAxNzMuODgsNDAuMDkgMTY4LjAwLDM2LjIwIDE2Mi4xMiw0MC4wOSAxNjQuMDEsMzMuMzAgMTU4LjQ5LDI4LjkxIDE2NS41MywyOC42MCIgZmlsbD0iI0ZGRkZGRiIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjUwIiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIvPgogIDxsaW5lIHgxPSIxMDAiIHkxPSI2MCIgeDI9IjEwMCIgeTI9IjEwOCIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjgyIiB5MT0iNzYiIHgyPSIxMTgiIHkyPSI3NiIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTgyLDc2IFE3Miw3NiA3Miw5MCBRNzIsMTAyIDg0LDEwMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTExOCw3NiBRMTI4LDc2IDEyOCw5MCBRMTI4LDEwMiAxMTYsMTAyIiBmaWxsPSJub25lIiBzdHJva2U9IiMxMTExMTEiIHN0cm9rZS13aWR0aD0iNC41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8bGluZSB4MT0iODQiIHkxPSIxMDIiIHgyPSI5MiIgeTI9IjEwMiIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjExNiIgeTE9IjEwMiIgeDI9IjEwOCIgeTI9IjEwMiIgc3Ryb2tlPSIjMTExMTExIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHJlY3QgeD0iMCIgeT0iMTU1IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjQ1IiBmaWxsPSIjMTExMTExIi8+CiAgPHRleHQgeD0iMTAwIiB5PSIxNzciIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOSIgZm9udC13ZWlnaHQ9IjkwMCIKICAgICAgICB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGRkZGIiBsZXR0ZXItc3BhY2luZz0iMC41Ij4KICAgIDx0c3BhbiBmb250LXdlaWdodD0iMzAwIiBmb250LXN0eWxlPSJpdGFsaWMiPk15PC90c3Bhbj48dHNwYW4gZm9udC13ZWlnaHQ9IjkwMCI+TkFWWTwvdHNwYW4+PHRzcGFuIGZpbGw9IiNDODk2MEEiPkhSPC90c3Bhbj4KICA8L3RleHQ+CiAgPHRleHQgeD0iMTAwIiB5PSIxOTEiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI5IiBmb250LXdlaWdodD0iNTAwIgogICAgICAgIGxldHRlci1zcGFjaW5nPSIxLjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNDOEM4QzgiPlNFUlZJTkcgU0FJTE9SUyAyNC83PC90ZXh0Pgo8L3N2Zz4="
+    st.markdown(f"""
+    <div class="login-banner">
+        <img src="data:image/svg+xml;base64,{_MNHR_B64}"
+             alt="MyNavy HR" title="MyNavy HR"
+             style="height:72px;width:auto;border-radius:6px;"/>
+        <div style="flex:1;text-align:center;padding:0 16px;">
+            <div style="font-family:'Roboto Slab',serif;font-size:1.65rem;font-weight:900;
+                        color:#FFFFFF;letter-spacing:.04em;line-height:1.1;">Sailor Digital Twin</div>
+            <div style="font-size:0.78rem;color:#88C8D8;margin-top:3px;letter-spacing:.03em;">
+                Developed by IBM &nbsp;·&nbsp; MyNavy HR &nbsp;·&nbsp; POC Demo &nbsp;·&nbsp;
+                <span style="font-size:0.7rem;color:#6AABB8;">All data is synthetic</span>
+            </div>
+        </div>
+        <img src="data:image/svg+xml;base64,{_IBM_B64}"
+             alt="IBM" title="IBM"
+             style="height:38px;width:auto;background:white;padding:4px 10px;border-radius:5px;"/>
     </div>
     """, unsafe_allow_html=True)
 
@@ -2896,7 +2962,6 @@ elif page == "Cases & Workflows":
             cm_sel  = st.selectbox("Community", cm_opts, key="med_cm")
 
         flt = df_nondeploy.copy()
-        if pg_sel != "All": flt = flt[flt["paygrade"] == pg_sel]
         if cm_sel != "All": flt = flt[flt["community"] == cm_sel]
 
         for _, row in flt.head(25).iterrows():
