@@ -1,0 +1,6 @@
+[theme]
+primaryColor        = "#088199"   # Teal Blue — buttons, sliders, active widgets
+backgroundColor     = "#FFFFFF"   # White — main content area
+secondaryBackgroundColor = "#EEF2F4"  # Light teal-grey — sidebar, widget backgrounds
+textColor           = "#08262C"   # Navy Black — body text
+font                = "sans serif"
