@@ -1500,8 +1500,10 @@ if page == "Command Dashboard":
                 concerns.append(("🔴", f"EAOS in {mos} months"))
             elif mos <= 12:
                 concerns.append(("🟡", f"EAOS in {mos} months"))
-            if row.get("srb_zone") and mos <= 18:
-                concerns.append(("🟡", f"SRB Zone {row['srb_zone']} ×{float(row['srb_multiplier'] or 0):.1f} pending"))
+            if row.get("srb_zone") and pd.notna(row.get("srb_zone")) and mos <= 18:
+                multiplier = row.get("srb_multiplier")
+                multiplier_val = float(multiplier) if multiplier and pd.notna(multiplier) else 0.0
+                concerns.append(("🟡", f"SRB Zone {row['srb_zone']} ×{multiplier_val:.1f} pending"))
             if (row.get("lapsed_necs") or 0) > 0:
                 concerns.append(("🟡", f"{int(row['lapsed_necs'])} lapsed NEC(s)"))
             if row.get("fitrep_avg") and float(row["fitrep_avg"]) < 3.5:
@@ -1526,7 +1528,6 @@ if page == "Command Dashboard":
                     </span>
                     <span style="font-size:12px;color:#546E7A;">{row.get('rate_name','')}</span>
                     {crit_badge}
-                    <span style="font-size:11px;color:#888;margin-left:auto;">DoD ID: {row['dod_id']}</span>
                   </div>
                   <div style="font-size:12px;color:#546E7A;margin-top:6px;">{concern_html}</div>
                 </div>
