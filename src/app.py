@@ -1570,7 +1570,13 @@ if page == "Command Dashboard":
             eaos_dist["window"] = pd.Categorical(eaos_dist["window"], categories=eaos_order, ordered=True)
             eaos_dist = eaos_dist.sort_values("window")
             st.markdown("**EAOS Horizon**")
-            st.bar_chart(eaos_dist.set_index("window"), color="#B30003", height=200)
+            import altair as alt
+            eaos_chart = alt.Chart(eaos_dist).mark_bar(color="#B30003").encode(
+                x=alt.X("window:O", sort=eaos_order, title=None, axis=alt.Axis(labelAngle=0)),
+                y=alt.Y("n:Q", title="Sailors", scale=alt.Scale(zero=True)),
+                tooltip=[alt.Tooltip("window:O", title="Window"), alt.Tooltip("n:Q", title="Sailors")]
+            ).properties(height=200)
+            st.altair_chart(eaos_chart, use_container_width=True)
 
 
 # =============================================================================
