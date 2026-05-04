@@ -1986,17 +1986,32 @@ elif page == "Retention Risk":
     if crit_f: filtered = filtered[filtered["rate_is_critical"]==1]
 
     section(f"Risk Drivers — {len(filtered):,} Sailors")
+    import altair as alt
     cl, cr = st.columns(2)
     cl.subheader("Primary Risk Driver")
-    cl.bar_chart(filtered["primary_driver"].value_counts(), color="#B30003")
+    _drv = filtered["primary_driver"].value_counts().reset_index(); _drv.columns=["Driver","Count"]
+    cl.altair_chart(alt.Chart(_drv).mark_bar(color="#B30003").encode(
+        x=alt.X("Driver:N", sort="-y", title=None, axis=alt.Axis(labelAngle=-30)),
+        y=alt.Y("Count:Q", scale=alt.Scale(zero=True), title="Sailors"),
+        tooltip=["Driver","Count"]
+    ).properties(height=220), use_container_width=True)
     cr.subheader("Recommended Actions")
-    cr.bar_chart(filtered["recommended_action"].value_counts(), color="#E8B00F")
+    _act = filtered["recommended_action"].value_counts().reset_index(); _act.columns=["Action","Count"]
+    cr.altair_chart(alt.Chart(_act).mark_bar(color="#E8B00F").encode(
+        x=alt.X("Action:N", sort="-y", title=None, axis=alt.Axis(labelAngle=-30)),
+        y=alt.Y("Count:Q", scale=alt.Scale(zero=True), title="Sailors"),
+        tooltip=["Action","Count"]
+    ).properties(height=220), use_container_width=True)
 
     section("Risk Score Distribution")
     bins = pd.cut(filtered["total_risk"], bins=[0,10,20,30,40,50,60,70,80,100],
         labels=["0-10","11-20","21-30","31-40","41-50","51-60","61-70","71-80","81-100"])
     hist_df = bins.value_counts().sort_index().reset_index(); hist_df.columns=["Score Band","Sailors"]
-    st.bar_chart(hist_df.set_index("Score Band"), color="#003B4F")
+    st.altair_chart(alt.Chart(hist_df).mark_bar(color="#003B4F").encode(
+        x=alt.X("Score Band:O", sort=list(hist_df["Score Band"]), title="Risk Score Band", axis=alt.Axis(labelAngle=0)),
+        y=alt.Y("Sailors:Q", scale=alt.Scale(zero=True), title="Sailors"),
+        tooltip=["Score Band","Sailors"]
+    ).properties(height=250), use_container_width=True)
 
     section("Risk by Community")
     comm_risk = (filtered.groupby("community").agg(
